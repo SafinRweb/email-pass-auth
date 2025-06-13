@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import auth from '../firebase.init.js'
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
 const Register = () => {
     const upperCaseRegex = /[A-Z]/;
@@ -9,6 +11,7 @@ const Register = () => {
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
     const [success, setSuccess] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [showPass, setShowPass] = useState(false);
     const handleRegister = (event) => {
         event.preventDefault();
         const email = event.target.email.value;
@@ -49,13 +52,26 @@ const Register = () => {
             <form onSubmit={handleRegister}>
                 <div className="card shadow-2xl">
                     <div className="card-body">
-                        <fieldset className="fieldset">
+                        <fieldset className="fieldset relative">
                             <label className="label">Email</label>
                             <input type="email" name='email' className="input w-full" placeholder="Email" />
                             <label className="label">Password</label>
-                            <input type="password" name='password' className="input w-full" placeholder="Password" />
+                            <input 
+                            type={showPass ? 'text':'password'} 
+                            name='password' 
+                            className="input w-full" 
+                            placeholder="Password" 
+                            required/>
+                            <button className='btn btn-xs absolute right-2 top-26'>
+                                
+                                {
+                                   showPass ? <FaEyeSlash/>:<FaEye />
+                                }
+                                </button> 
                             {/* <div><a className="link link-hover">Forgot password?</a></div> */}
-                            <button className="btn btn-neutral mt-4">Register</button>
+                            <button 
+                            onClick={()=> setShowPass(!showPass)}
+                            className="btn btn-neutral mt-4">Register</button>
                         </fieldset>
                     </div>
                 </div>
