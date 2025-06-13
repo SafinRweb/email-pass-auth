@@ -3,6 +3,11 @@ import auth from '../firebase.init.js'
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Register = () => {
+    const upperCaseRegex = /[A-Z]/;
+    const lowerCaseRegex = /[a-z]/;
+    const digitRegex = /[0-9]/;
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const [success, setSuccess] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const handleRegister = (event) => {
         event.preventDefault();
@@ -10,13 +15,32 @@ const Register = () => {
         const password = event.target.password.value;
         console.log(email, password);
         setErrorMessage('');
+        setSuccess(false);
+        if (password.length < 6) {
+            setErrorMessage('Password should be at least 6 characters long.');
+            return;
+        } else if (!upperCaseRegex.test(password)) {
+            setErrorMessage('Password must include at least one uppercase letter.');
+            return;
+        } else if (!lowerCaseRegex.test(password)) {
+            setErrorMessage('Password must include at least one lowercase letter.');
+            return;
+        } else if (!digitRegex.test(password)) {
+            setErrorMessage('Password must include at least one number.');
+            return;
+        } else if (!specialCharRegex.test(password)) {
+            setErrorMessage('Password must include at least one special character.');
+            return;
+        }
         createUserWithEmailAndPassword(auth, email, password)
-            .then(result =>{
+            .then(result => {
                 console.log(result.user);
+                setSuccess(true);
             })
-            .catch(error =>{
-                console.log('Error',error.message);
+            .catch(error => {
+                console.log('Error', error.message);
                 setErrorMessage(error.message)
+                setSuccess(false);
             })
     }
     return (
@@ -38,6 +62,9 @@ const Register = () => {
             </form>
             {
                 errorMessage && <p className='text-red-700'>{errorMessage}</p>
+            }
+            {
+                success && <p className='text-green-500'>Successfully Created an Account</p>
             }
         </div>
     );
